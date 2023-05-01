@@ -20,13 +20,13 @@ The full catalog, even when compressed, is too large for simple hosting in this 
 
 The full CSV can then be imported into the database tool of your choosing.
 
-### Current Version: v0.2
+### Current Version: v0.3
 
 Versions v0.x are public alpha releases. They should be useful for many purposes, but they are not completely finished products and significant changes in a short time between versions are possible, even likely.
 
 Version v0.1 was mostly to make sure data processing was working as intended. It was not publicly released.
 
-Version v0.2 has the following data fields:
+Versions v0.2 and v0.3 have the following data fields:
 
 1. `id`: A numeric ID for each star, after sorting all entries by right ascension.
 2. `tyc`: The Tycho-2 ID, with leading zeros removed from the first and second portion (for consistency with GAIA linking tables)

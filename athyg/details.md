@@ -10,15 +10,29 @@ For HYG, it was to get, as completely as possible, all the entries from the 3 so
 
 For AT-HYG, it was to get, as completely as possible, accurate data (preferably from GAIA for distances) for as many stars as possible above a specific magnitude limit, while keeping the data set size manageable. The Tycho-2 limit of V ~ 12 is the result. Stars fainter than that limit are subject to being dropped from AT-HYG if they cannot be matched accurately to GAIA for distances or Tycho-2 or GAIA for positions.
 
+### Version-specific notes:
+
+#### v0.3
+
+This version made the following changes wrt. v0.2:
+
+* Adding several thousand stars from the Tycho-2 Supplement #1
+* Adding a number of stars that had a valid GAIA ID (and distance) but could not be matched directly via HIP, HD, or Gliese ID to GAIA and Tycho-2. These total 60 stars with a distance under 10 pc (32.6 light years).
+* A small number of stars were either removed entirely, or made available to GAIA matching (and hence better distance values) after some small changes to the HYG v3.x catalog. See the HYG section for more details.
+* A more conscious decision to not attempt to ID higher-level components (e.g., Gliese "B" or "C") if they are not easily matched with existing data. This is in part to avoid duplicates between stars that are clearly outlined as multiple in Gliese and ones whose Tycho or GAIA entries cannot be easily matched to a Gliese entry (e.g., because it was too dim to be in HIP or HD). Because of this, many fewer Gliese "B", "C", etc. stars in HYG are labeled as such in AT-HYG, although they often will exist without such a label if Tycho-2 or GAIA included them, and a close examination of the stars very close to the "A" star in R.A. and Dec will reveal these unlabeled components.
+#### v0.2
+
+This is the first public release. Details of its construction are outlined below.
 ### Data merging
 
 Merging GAIA and Tycho-2 is straightforward:
 
 * The online GAIA query tool at https://gaia.aip.de/query/ gives a query form where it's possible to build and then download a GAIA-Tycho-2 link table, which also contains the GAIA positions and distances.
 * The full Tycho-2 dataset itself is available at https://cdsarc.cds.unistra.fr/viz-bin/cat/I/259#/browse, and again, it's pretty straightforward to pick and choose the fields to include.
+* By a similar process, the Tycho-2 Supplement #1 can be obtained from https://cdsarc.cds.unistra.fr/ftp/cats/I/259/suppl_1.dat.gz . This contains a number of stars that were not included in the main Tycho-2 catalog, but have valid and useful data.
 * A Tycho2 to HD link table can be built from data at https://cdsarc.cds.unistra.fr/viz-bin/qcat?J/A+A/386/709. Then it was possible to merge on HIP ID or HD ID, with HIP being preferred when possible. 
 
-The end result, after combining appropriate subsets of these 3 data sources, is the Augmented Tycho (AT) catalog, which is every star in the Tycho-2 main catalog(excluding a _very_ small number -- 20 entries -- without a valid visual magnitude), combined with GAIA and HD IDs plus GAIA distances/parallaxes.
+The end result, after combining appropriate subsets of these 4 data sources, is the Augmented Tycho (AT) catalog, which is every star in the Tycho-2 catalog(excluding a _very_ small number -- 20 entries -- without a valid visual magnitude), combined with GAIA and HD IDs plus GAIA distances/parallaxes.
 
 Merging this with HYG was a little trickier, especially since HYG contains many stars (mostly ones from Gliese) that had no ID in common with either Tycho-2 or GAIA. As noted above, I have decided not to try to combine every last Gliese-only star in HYG against AT in the final merge. This means that, in practice, _most_ Gliese stars fainter than V ~ 12 will not be present, unless they also have a HIP or HD ID (uncommon), or they fall into certain categories (in more detail below). A capsule summary of the AT to HYG merge is here:
 
@@ -63,10 +77,9 @@ To clean up HYG, I applied an appropriate number of years of proper motion data 
 
 Here are some items that are possible additions:
 
-1. Additional IDs of HYG stars w/out HIP or HD IDs in Tycho, making it possible to attach more HYG data to Tycho stars.
-2. Add proper motion data from GAIA.
-3. Add radial velocity values (and so also full 3D space velocities) from GAIA.
-4. Add BT (blue) magnitudes to Tycho's VT, giving us color index (on the BT and VT values) and also possibly an estimate of V magnitudes for Tycho stars, making magnitude values more consistent
-5. Add spectral types directly from HD stars to ones that don't have them in HIP.
-6. Add 3-letter constellation labels for non-HYG entries.
+1. Add proper motion data from GAIA.
+2. Add radial velocity values (and so also full 3D space velocities) from GAIA.
+3. Add BT (blue) magnitudes to Tycho's VT, giving us color index (on the BT and VT values) and also possibly an estimate of V magnitudes for Tycho stars, making magnitude values more consistent
+4. Add spectral types directly from HD stars to ones that don't have them in HIP.
+5. Add 3-letter constellation labels for non-HYG entries.
 
