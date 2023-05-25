@@ -104,7 +104,7 @@ During initial tests of the data merging described previously, as well as all al
 
 These discrepancies could largely be traced to various errors in the cross-reference IDs, primarily in the Tycho->HD cross-references, but also a few in the original HYG database and in HIP->HD cross-references.
 
-The errors I found are detailed in the file details_v1_errata.md. Fixing these errors reduced the number of duplicated or missing HYG entries from approximately 75 entries in the first pass to zero erroneous stars with a known HIP ID and 21 stars with a known HD ID failing to be updated with HYG data (all of which are members of multiple star systems with at least 1 other component in AT-HYG that _was_ correctly updated with HYG data).
+The errors I found are detailed in the file details_v1_errata.md. Fixing these errors reduced the number of duplicated or missing HYG entries in AT-HYG from approximately 75 entries in the final merges of alpha versions v0.2 or v0.3 to zero erroneous stars with a known HIP ID and 20 stars with a known HD ID failing to be updated with HYG data (all of which are members of multiple star systems with at least 1 other component in AT-HYG that _was_ correctly updated with HYG data).
 
 #### Tycho-2 magnitudes
 
