@@ -97,7 +97,7 @@ Note that some fields have dependencies on multiple sources: for example, the Ca
 #### Data By Source Types
 
 Here are the numbers of stars for each combination of possible source types. The most common entry in AT-HYG has a position and brightness (apparent magnitude) from Tycho-2 and a distance from Gaia. All told, the very
-large majority of stars have a Gaia DR3 distance, including at least 90% of HIPPARRCOS entries (some of which are too bright to have good Gaia DR3 data at the moment):
+large majority of stars have a Gaia DR3 distance, including about 90% of HIPPARRCOS entries (some of which are too bright to have good Gaia DR3 data at the moment):
 
 
 |Position|Distance|Magnitude|Total Count
