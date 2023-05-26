@@ -58,12 +58,30 @@ Version v0.1 was mostly to make sure data processing was working as intended. It
 
 Versions v0.2 and v0.3 have the same field structure as v1.0.
 
+### Current Version (v1.0) Source Data And Assembly:
+
+The data sources for version 1.0 are:
+
+- The full Tycho-2 catalog available from https://cdsarc.cds.unistra.fr/viz-bin/cat/I/259#/browse .
+- The first Tycho-2 Supplemental catalog, available from https://cdsarc.cds.unistra.fr/ftp/cats/I/259/suppl_1.dat.gz.
+- A link table catalog between Tycho-2 and Henry Draper, generated from the catalog at https://cdsarc.cds.unistra.fr/viz-bin/qcat?J/A+A/386/709.
+- A link table catalog between Tycho-2 and Gaia DR3. I used the query facility at https://gaia.aip.de/query/. Details of the specific query are in the details_v1.md file.
+- HYG v3.5, from this site. 
+- A collection of data for Gliese IDs from SIMBAD (https://simbad.cds.unistra.fr/simbad/) that linked Gliese IDs to Tycho-2 and Gaia DR3 IDs when no other linking information was available. The list of Gliese IDs was taken directly from the HYG catalog and matched to other catalogs via automated queries to SIMBAD.
+
+The first four catalogs, after correcting a few cross-reference errors, consitute the Augmented Tycho or AT catalog. This catalog contains every valid (both position and magnitude are present and within reasonable bounds) Tycho-2 star from the main and first supplemental Tycho-2 catalogs, along with the cross-reference IDs to Henry Draper and Gaia DR3 and, when available, Gaia DR3 distances.
+
+Linking the AT catalog to HYG v3.5 via the HIPPARCOS and Henry Draper IDs in AT gives most HYG cross-references, which add HYG data such as proper name, Bayer and Flamsteed IDs, and spectral type to the catalog for the linked stars.
+
+Finally, most unlinked HYG records (no HIPPARCOS or Henry Draper IDs) can be linked via the Gliese ID and a suitable Tycho-2 or Gaia DR3 ID found via SIMBAD. The list of Gliese IDs included all single and "A" multiple star components from HYG, as well as a few selected secondary or tertiary stars when they were well-separated and well-characterized in all catalogs.
+
+The end result, after fixing a few more cross-reference errors and validating subsets of the data against other lists -- e.g., the Wikipedia article on nearest stars, https://en.wikipedia.org/wiki/List_of_nearest_stars_and_brown_dwarfs -- is the AT-HYG catalog.
 #### Source Indicator meanings:
 
 Source indicator fields ("*_src") identify the data source used for a value. The indicator fields apply to fields for the following data:
 
 - Distances
-- Positions (equatoria coordinates from Earth)
+- Positions (equatorial coordinates from Earth)
 - Apparent Magnitudes
 
 Note that some fields have dependencies on multiple sources: for example, the Cartesian coordinates depend on both the position and distance, and absolute magnitudes depend on distance and (apparent) magnitudes.
@@ -74,9 +92,30 @@ Note that some fields have dependencies on multiple sources: for example, the Ca
 - `HIP_X`: Fields are from HIPPARCOS overriding a known Tycho-2 value. This is only for the special case where the Tycho-2 star position was a "non-mean" position and hence not having the same epoch as the rest of the data. [Positions only]
 - `GLIESE`: Fields are from Gliese. [Positions, distances, or magnitudes]
 - `OTHER`: Fields are from another source. Currently applies only to the special entry for Sol. [Positions, distances, or magnitudes]
-- `NONE`: No valid source of this data; very uncommon [Distances only]
+- `NONE`: No valid source of this data; uncommon [Distances only]
 
-#### Additional Details
+#### Data By Source Types
+
+Here are the numbers of stars for each combination of possible source types. The most common entry in AT-HYG has a position and brightness (apparent magnitude) from Tycho-2 and a distance from Gaia. All told, the very
+large majority of stars have a Gaia DR3 distance, including at least 90% of HIPPARRCOS entries (some of which are too bright to have good Gaia DR3 data at the moment):
+
+
+|Position|Distance|Magnitude|Total Count
+|--------|--------|---------|-----
+TYC      | GAIA   | TYC     | 2367088
+TYC      | GAIA   | HIP     | 104668
+TYC      | NONE   | TYC     | 66116
+TYC      | HIP    | HIP     | 11897
+GLIESE   | GAIA   | GLIESE  | 952
+HIP_X    | GAIA   | HIP     | 694
+TYC      | NONE   | HIP     | 512
+HIP_X    | HIP    |HIP      | 196
+GLIESE   | GLIESE | GLIESE  | 30
+TYC      | GLIESE | HIP     | 9
+HIP_X    | NONE   | HIP     | 3
+OTHER    | OTHER  | OTHER   | 1
+
+### Additional Details
 
 Information about how this data set was generated are in the "details" files:
 
