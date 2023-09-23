@@ -32,8 +32,8 @@ The acceptance criteria for the Augmented Tycho (AT) catalog are:
 2. AT contains _as many stars_ with good quality distance information as possible, with Gaia DR3 values preferred, and Gaia DR2 or HIPPARCOS acceptable if Gaia DR3 is not available.
 3. AT contains _accurate cross-reference IDs_ for every star that has an available reference: 
     * Tycho-2 (the base catalog), 
-    * the three source catalogs in HYG (HIPPARCOS, Yale BSC, Gliese), 
     * Gaia, with DR3 values preferred.
+    * Other major catalogs, predominantly HIPPARCOS and Henry Draper.
 
 The bulk of the additional data comes from Gaia. Merging Gaia and Tycho-2 is straightforward:
 
