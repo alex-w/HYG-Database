@@ -25,7 +25,17 @@ There have been several changes from all of the alpha (v0.x) versions, the main 
 ### Data merging
 
 #### Generating the Augmented Tycho (AT) catalog
-Merging Gaia and Tycho-2 is straightforward:
+
+The acceptance criteria for the Augmented Tycho (AT) catalog are:
+
+1. AT contains _every_ star in the Tycho-2 catalog with valid Tycho-2 visual magnitude data. Only 20 of the 2.5M+ records in Tycho-2 are missing a valid visual magnitude.
+2. AT contains _as many stars_ with good quality distance information as possible, with Gaia DR3 values preferred, and Gaia DR2 or HIPPARCOS acceptable if Gaia DR3 is not available.
+3. AT contains _accurate cross-reference IDs_ for every star that has an available reference: 
+    * Tycho-2 (the base catalog), 
+    * the three source catalogs in HYG (HIPPARCOS, Yale BSC, Gliese), 
+    * Gaia, with DR3 values preferred.
+
+The bulk of the additional data comes from Gaia. Merging Gaia and Tycho-2 is straightforward:
 
 * The online Gaia query tool at https://gaia.aip.de/query/ gives a query form where it's possible to build and then download a Gaia-Tycho-2 link table, which also contains the Gaia DR3 positions and distances.
 
@@ -42,7 +52,8 @@ inner join "gaiaedr3"."tycho2tdsc_merge_best_neighbour" t on g."source_id"=t."so
 
 * The full Tycho-2 dataset itself is available at https://cdsarc.cds.unistra.fr/viz-bin/cat/I/259#/browse, and again, it's pretty straightforward to pick and choose the fields to include. One of these fields is the HIPPARCOS (HIP) ID for the Tycho-2 star when it exists.
 * By a similar process, the Tycho-2 Supplement #1 can be obtained from https://cdsarc.cds.unistra.fr/ftp/cats/I/259/suppl_1.dat.gz. This contains a number of stars that were not included in the main Tycho-2 catalog, but have valid and useful data.
-* Finally, a Tycho2 to HD link table can be built from data at https://cdsarc.cds.unistra.fr/viz-bin/qcat?J/A+A/386/709. Then it is possible to merge the two Tycho-2 datasets on HIP ID or HD ID, with HIP being preferred when possible. 
+* A Tycho2 to HD link table can be built from data at https://cdsarc.cds.unistra.fr/viz-bin/qcat?J/A+A/386/709. Then it is possible to merge the two Tycho-2 datasets on HIP ID or HD ID, with HIP being preferred when possible. 
+* (for versions 1.1+) Finally, a large subset (~10K) of these stars, based on having V magnitude <=10.0 and no Gaia distance after all these cross-references, were looked up in SIMBAD and their Gaia IDs and parallaxes found when possible. 
 
 The end result, after combining the two Tycho-2 datasets and adding the Gaia and HD data, is the Augmented Tycho (AT) catalog. 
 
@@ -66,12 +77,14 @@ A capsule summary of the AT to HYG merge is here:
 8. sort the resulting catalog by right ascension.
 9. sequentially number the entries and use the sequential numbers as IDs.
 
-The current starting points (step 1) are:
+The current starting points for version 1.1 (step 1) are:
 
-* AT v1.0
-* HYG v3.5
+* AT v1.01
+* HYG v3.6.1
 
-HYG v3.5 fixes a small number of errors that contributed to some duplicate and missing data in AT-HYG in initial runs. The build of AT v1.0 also addressed some cross-reference errors in AT v0.x. Details are in the "details_v1_errata.md" file.
+AT v1.01 is a minor update to AT v1.0 that adds 7.7K Gaia distances that were not ID'd in v1.0.
+
+HYG v3.6.1 is a more significant update to HYG, which adds constellation names to all stars in HYG as well as fixing a few incorrect labels. The previous version, HYG 3.5, fixed a small number of errors that contributed to some duplicate and missing data in AT-HYG in initial runs. The build of AT v1.0 also addressed some cross-reference errors in AT v0.x. Details are in the "details_v1_errata.md" file.
 
 The next two steps (2 and 3) generate a large number of cross-references for all the Gliese single and "A" component stars identifiable in the HYG database. This list replaces the rather _ad hoc_ approach to Gliese star cross-referencing in the alpha (v0.x) releases, which relied on approaches such as unconditionally adding Gliese stars with proper names (e.g., 'Wolf 359') or adding ones manually identified within a certain distance range in Gaia.
 
@@ -87,13 +100,15 @@ The last few steps ensure that the catalog is in a typical order for astronomica
 
 Note that since different versions of AT-HYG may add or remove stars as a correction, the sequential ID numbers may be version-dependent. Once the catalog is fairly stable to significant changes, entries determined to be included by mistake may simply be deleted without renumbering, to preserve long-term stability of the ID numbers.
 
+An intended design for a given major version (e.g. AT-HYG 1.x vs 2.x) is that IDs are stable across minor versions (e.g. AT-HYG 1.1 or v1.2). The only _allowed_ changes to the sequence within a major version would be to delete stars found to be invalid, without renumbering. This way, a given AT-HYG sequential ID is guaranteed to refer to the same object across a major version.
+
 ### Data quality
 
 #### Known Omissions:
 
-In AT-HYG v1.0, all stars from HYG with a HIPPARCOS ID (117951 stars) have been successfully cross-referenced to a star in the final catalog. 
+In AT-HYG v1.x, all stars from HYG with a HIPPARCOS ID (117951 stars) have been successfully cross-referenced to a star in the final catalog. 
 
-In AT-HYG v1.0, all but 20 stars from HYG with a Henry Draper ID (98813 stars, many of which also have a HIP ID) have been successfully cross-referenced to a star in the final catalog. Of these 20 stars, 3 are known to exist in AT-HYG as Tycho-2 stars (Gamma Lep B, 17 Cyg B, and 37 Cet B), that were not matched to a HYG star, primarily because they are faint secondary ("B") stars not matched by the catalog matching flow. The remaining 17, which are not in AT-HYG, are mostly very close secondary stars that are not necessarily worth breaking out as separate entities. Some lack a Tycho-2 ID. Many are members of extremely close binaries -- separations 2 arcseonds or less -- whose "A" components have a combined system magnitude in HYG and thus also AT-HYG. Disentangling the details of the last few HYG HD multiples is a possible task for a later version of the catalog, but is not planned immediately.
+In AT-HYG v1.x, all but 20 stars from HYG with a Henry Draper ID (98813 stars, many of which also have a HIP ID) have been successfully cross-referenced to a star in the final catalog. Of these 20 stars, 3 are known to exist in AT-HYG as Tycho-2 stars (Gamma Lep B, 17 Cyg B, and 37 Cet B), that were not matched to a HYG star, primarily because they are faint secondary ("B") stars not matched by the catalog matching flow. The remaining 17, which are not in AT-HYG, are mostly very close secondary stars that are not necessarily worth breaking out as separate entities. Some lack a Tycho-2 ID. Many are members of extremely close binaries -- separations 2 arcseonds or less -- whose "A" components have a combined system magnitude in HYG and thus also AT-HYG. Disentangling the details of the last few HYG HD multiples is a possible task for a later version of the catalog, but is not planned immediately.
 
 #### Errors in other catalog cross-references
 
@@ -118,13 +133,15 @@ and this information may be included in later versions of the catalog.
 
 #### Tycho-2 positions
 
-Tycho-2 defines a field called "pflag" that identifies important conditions on positions. Most Tycho-2 positions have an empty pflag, meaning that the positions (R.A. and dec) are mean values from multiple observations that have been corrected to epoch 2000. 
+All Tycho-2 stars have an _equinox_ of J2000.0. That is, the relationship between the equatorial and ecliptic coordinates is the one existing at J2000. However, not all stars have an _epoch_ of J2000, meaning that there may be small differences in "actual" position due to the stars' proper motion.
 
-Approximately 4% of stars in Tycho-2 have a pflag of "X", meaning that the position is not a mean of several measurements, _and_ the epoch is the mission base epoch of 1991.5 instead of 2000. These are most often multiple stars, but there are a few singles in the mix.
+Tycho-2 defines a field called "pflag" that identifies important conditions on positions. Most Tycho-2 positions have an empty pflag, meaning that the positions (R.A. and dec) are mean values from multiple observations that have been corrected to epoch J2000. 
 
-All HYG positions have been adjusted to epoch + equinox 2000.0. As a result, to avoid inconsistencies in some Tycho-2 positions, stars with a pflag of X in Tycho and a valid HIP match have had their positions replaced with HIP positions. This is the basis of the "HIP_X" position source indicator.
+Approximately 4% of stars in Tycho-2 have a pflag of "X", meaning that the position is not a mean of several measurements, _and_ the epoch is the mission base epoch of J1991.5 instead of J2000. These are most often multiple stars, but there are a few singles in the mix.
 
-To clean up HYG, I applied an appropriate number of years of proper motion data to the HIPPARCOS data to bring it to epoch 2000.0. I didn't do this _directly_ with Tycho-2 pflag "X" stars because pflag = "X" also means no Tycho-2 proper motions. One of the likely improvements for v1.x or v2.x of the catalog is to use GAIA proper motions, when available, to adjust Tycho-2 stars with pflag = "X". This is not part of any v0.x releases.
+All HYG positions have been adjusted to epoch + equinox J2000.0. As a result, to avoid inconsistencies in some Tycho-2 positions, stars with a pflag of X in Tycho and a valid HIP match have had their positions replaced with HIP positions. This is the basis of the "HIP_X" position source indicator.
+
+To clean up HYG, I applied an appropriate number of years of proper motion data to the HIPPARCOS data to bring it to epoch 2000.0. I didn't do this _directly_ with Tycho-2 pflag "X" stars because pflag = "X" also means no Tycho-2 proper motions. One of the likely improvements for v1.x or v2.x of the catalog is to use GAIA proper motions, when available, to adjust Tycho-2 stars with pflag = "X". 
 
 #### Possible additions in later releases
 
@@ -134,5 +151,5 @@ Here are some items that are possible additions:
 2. Add radial velocity values (and so also full 3D space velocities) from GAIA.
 3. Add BT (blue) magnitudes to Tycho's VT, giving us color index (on the BT and VT values) and also possibly an estimate of V magnitudes for Tycho stars, making magnitude values more consistent
 4. Add spectral types directly from HD stars to ones that don't have them in HIP.
-5. Add 3-letter constellation labels for non-HYG entries.
+5. (done in v1.1) Add 3-letter constellation labels for non-HYG entries.
 
