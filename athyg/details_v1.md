@@ -18,7 +18,7 @@ A related condition is because the treatment of multiple stars varies significan
 
 There have been several changes from all of the alpha (v0.x) versions, the main ones being:
 
-* The decision to concentrate on stars that were either single or the primary component of their star systems (usually the "A" component) was made explicit at all stages. In multiple stars, "B" and other fainter componentsfrom HYG are subject to being dropped if they cannot be unambiguously associated with a star in Tycho or Gaia.
+* The decision to concentrate on stars that were either single or the primary component of their star systems (usually the "A" component) was made explicit at all stages. In multiple stars, "B" and other fainter components from HYG are subject to being dropped if they cannot be unambiguously associated with a star in Tycho or Gaia.
 * There is a more comprehensive procedure to assign HYG stars, especially Gliese stars, without an explicit link to Tycho from HYG via a HYG->HIPPARCOS or HYG->Henry Draper ID reference. 
 * A small number of cross-references (for HIP->HD and TYC->HD in particular) were found to be incorrect, leading either to duplicate entries from multiple sources or to valid Tycho entries that were missing their HYG data in the final catalog.
 

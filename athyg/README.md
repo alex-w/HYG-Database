@@ -69,11 +69,11 @@ Since different versions of the DB may add or remove records, the `id` value is 
 
 ### Previous Versions: v0.x
 
-Versions v0.x are public alpha releases. They should be useful for many purposes, but they are not completely finished products and significant changes in a short time between versions are possible, even likely.
+Versions v0.x were public alpha releases. Version v0.1 was mostly to make sure data processing was working as intended. It was not publicly released.
 
-Version v0.1 was mostly to make sure data processing was working as intended. It was not publicly released.
+Versions v0.2 and v0.3 have the same field structure as v1.0, but significantly changed the way many of the HYG stars, especially from Gliese, were merged. 
 
-Versions v0.2 and v0.3 have the same field structure as v1.0.
+These versions are deprecated and should be replaced with v1.x.
 
 ### Current Version (v1.x) Source Data And Assembly:
 
@@ -99,7 +99,7 @@ The end result, after fixing a few more cross-reference errors and validating su
 
 Information about how this data set was generated are in the "details" files:
 
-- `details_v0.md`: Information about the alpha (v0.x) releases
+- `details_v0.md`: Information about the alpha (v0.x) releases, which covers some of the core aspects of the data processing used in later releases
 - `details_v1.md`: information about the current (v1.x) releases
 - `details_v1_errata.md`: Information about various source catalog errors found, and corrected in, v1.0
 
