@@ -14,7 +14,7 @@ A related condition is because the treatment of multiple stars varies significan
 
 ### Version-specific notes:
 
-#### Generating the Augmented Tycho (AT) catalog v2.0
+#### Generating the Augmented Tycho (AT) catalog v2.1
 
 The acceptance criteria for the Augmented Tycho (AT) catalog (in any version) are:
 
@@ -25,7 +25,7 @@ The acceptance criteria for the Augmented Tycho (AT) catalog (in any version) ar
     * Gaia, with DR3 values preferred.
     * Other major catalogs, predominantly HIPPARCOS and Henry Draper.
 
-The version of AT used for AT-HYG v2.0 is AT v2.0. The primary difference between AT 1.x and AT 2.x is the addition of velocity data (proper motions and radial velocities). The primary Gaia to Tycho-2 cross-reference query for AT v2.0 was almost identical to the version for v1.x, except for adding the velocity data:
+The version of AT used for AT-HYG v2.0 is AT v2.1. The primary difference between AT 1.x and AT 2.x is the addition of velocity data (proper motions and radial velocities). The primary Gaia to Tycho-2 cross-reference query for AT v2.1 was the same as for AT v2.0, and almost identical to the version for v1.x, except for adding the velocity data:
 
 `select g."source_id", 
     t.original_ext_source_id, 
@@ -41,40 +41,57 @@ inner join "gaiaedr3"."tycho2tdsc_merge_best_neighbour" t on g."source_id"=t."so
 
 The cross-referencing to other catalogs (such as the Henry Draper catalog) followed the same process as for AT v1.x; see the AT v1.x construction notes in details_v1.md for more information.
 
-As before, AT v2.0 contains _every_ star in the Tycho-2 catalog with valid Tycho-2 visual magnitude data (only 20 stars out of over 2.5 million dropped, because of invalid magnitude values), along with its HIP ID, HD ID, Gaia DR3 ID, and Gaia distance/parallax, proper motions, and radial velocities when these values are known. It also contains computed values for the Cartesian velocity components vx, vy, and vz that can be used directly whenever possible.
+For AT v2.1, two new fields were added:
 
-#### Generating the merged Augmented Tycho-HYG (AT-HYG) catalog
+* the Tycho BT - VT magnitudes as a color index ("CI") field
+* a "Con" field containing the constellation (standard 3-letter abbreviation) the star is in.
+
+The color index is simply the raw Tycho data's BT field - VT field. If either field was missing, no color index was computed. (In practice, this means no BT magnitude measurement existed. Stars without valid VT magnitudes were omitted from AT in all versions.)
+
+The rationale for adding a "Con" field is that calculating the correct constellation locations for all 2.5M stars is fairly time-consuming compared to other steps, and in general, I recreate copies of the final AT-HYG catalog more often than I build AT proper. This change -- to add constellation names to AT -- moves that one very calculation-heavy step to a more appropriate part of the build process.
+
+As before, AT v2.1 contains _every_ star in the Tycho-2 catalog with valid Tycho-2 visual magnitude data (only 20 stars out of over 2.5 million dropped, because of invalid magnitude values), along with its HIP ID, HD ID, Gaia DR3 ID, and Gaia distance/parallax, proper motions, and radial velocities when these values are known. It also contains computed values for the Cartesian velocity components vx, vy, and vz that can be used directly whenever possible.
+
+#### Generating the merged Augmented Tycho-HYG (AT-HYG) catalog v2.1
 
 This followed an almost identical process to the process described in details_v1.md.
 
-The current starting points for AT-HYG v2.0 are:
+The current starting points for AT-HYG v2.1 are:
 
-* AT v2.0 (described above)
+* AT v2.1 (described above)
 * HYG v3.7.
 
 HYG v3.7 is a minor update to the version used for AT-HYG v1.1 (HYG v3.6.1). It adds some data for Yale Bright Star Catalog stars that was missing or incorrect in previous versions.
 
-The only significant difference in the AT-HYG build was to add a step to check AT for missing proper motion and/or radial velocity data, and substitute values from HYG when known. If there was a change to the AT velocity data, the build process recalculated the vx, vy, and vz values obtained from the proper motions and radial velocity, and updated the AT-HYG catalog with these new values.
+Significant differences in the AT-HYG build from v1.x were:
+
+* v2.0+
+    * add a step to check AT for missing proper motion and/or radial velocity data, and substitute values from HYG when known. 
+    * If there was a change to the AT velocity data, recalculate the vx, vy, and vz values obtained from the proper motions and radial velocity, and update the AT-HYG catalog with these new values.
+* v2.1+ 
+    * add the color indexes from HYG when relevant
+    * remove the constellation labeling step, now that constellations are correctly assigned for all stars in AT v2.1 as well as recent versions of HYG.
+    * add proper motion and radial velocity data from SIMBAD to the subset of Gliese stars that used SIMBAD for parallax lookups.
 
 ### Data quality
 
 Data quality issues are largely the same as in details_v1.md, except for issues specific to proper motion and radial velocity data.
 
-There are two items for AT-HYG v2.0 that are worth noting:
+There are three items for AT-HYG v2.1 that are worth noting. The first one is new to AT-HYG v2.1; the other two are present in AT-HYG v2.0 as well. For the first two items, the context is a minor deficiency in the build for HYG that affects the "source" tracking for some of the velocity data, especially radial velocity data, in HYG. In AT-HYG, one priority has been to label the provenance of all data as closely as possible, so it is possible at a glance to see where the data for a specific figure (such as distance or absolute magnitude) comes from, but in HYG, some of this information is less clear.
 
-1. There is a minor deficiency in the build for HYG that affects the "source" tracking for some of the velocity data in HYG. In AT-HYG, one priority has been to label the provenance of all data as closely as possible, so it is possible at a glance to see where the data for a specific figure (such as distance or absolute magnitude) comes from. In HYG, this was well-tracked for IDs (hence the name HYG for Hipparcos + Yale + Gliese), as well as for data where there was a clear quality hierarchy. For example, if there was a HIP parallax and a Yale BSC or Gliese parallax, the HIP parallax was chosen without hesitation. The same was generally true for proper motions in HYG. On the other hand, for radial velocities in HYG, there were no values from HIPPARCOS, so they are more of a grab bag. The main source was a somewhat niche catalog oriented specifically towards collecting radial velocities (Wilson Evans Batten), but some came from Yale, and some others from Gliese. As a result, the origin of radial velocities (and, to a rather lesser extent, proper motions) in HYG is not always clear. This is why they were given a "HYG" source in AT-HYG rather than something more specific like "GLIESE"/"GJ". 
+1. (v2.1) There are several thousand HYG stars with only a Gliese ID (no HIP or HR IDs). These can't be linked directly to AT-HYG, so they have been augmented with a SIMBAD query to get a valid Tycho-2 ID cross-reference, and to do additional lookups for parallax, proper motions, and radial velocities. The parallaxes and proper motions almost always came back from Gaia DR2 or DR3. However, especially for the fainter Gliese stars, the radial velocities could come from all sorts of catalogs, many of which were specialized ones just for a subset of M dwarfs. I did not attempt to break these sources out in detail; any radial velocity for this set of stars that was not a Gaia-sourced RV has an "rv_src" of "OTHER" in AT-HYG. 
 
-Untangling this was out of scope for AT-HYG. I spot checked a few of the HYG radial velocities in SIMBAD and, in general, they are of acceptable quality, just generally lower precision than ones from Gaia.
+2. (v2.0 and v2.1) In HYG stars that were not augmented with a SIMBAD lookup (i.e. ones with adequate direct cross-references to Tycho-2), radial velocities have a similar issue, but a bit less extreme. For these stars, the main source for RV was a somewhat niche catalog oriented specifically towards collecting radial velocities (Wilson Evans Batten), but some RVs came from Yale, and some others from Gliese. All HYG RVs for records *not* augmented by SIMBAD will fall into one of these three sources. As a result, these radial velocities were given an "rv_src" of "HYG" in AT-HYG. I spot checked a few of the HYG radial velocities in SIMBAD and, in general, they are of acceptable quality, just generally lower precision than ones from Gaia.
 
-2. In AT-HYG v1.01 and later, there is a custom list of Tycho-2 stars that were missing a Gaia-Tycho 2 link from the data files I worked with, but which could be looked up in SIMBAD and correctly identified there. This list (~10K stars) only contains the associated Gaia parallax data (no Gaia velocities). As a result, these stars do not currently have radial velocities (they generally have good proper motions from Tycho-2), and so their Cartesian velocity values are not especially accurate. 
+3. (v2.0 and v2.1) In AT-HYG v1.01 and later, there is a custom list of Tycho-2 stars that were missing a Gaia-Tycho 2 link from the data files I worked with, but which could be looked up in SIMBAD and correctly identified there. This list (~10K stars) only contains the associated Gaia parallax data (no Gaia velocities). As a result, these stars do not currently have radial velocities (they generally have good proper motions from Tycho-2), and so their Cartesian velocity values are not especially accurate. 
 
-Addressing this was considered to be fairly minor compared to getting the distances in the first place. Also, since these stars still generally have good proper motion data, any application that uses only the proper motions for (relatively short term) space motion calculations isn't affected; only long-term 3D motion calculations are an issue. Resolving this may be a candidate for later versions of AT-HYG. 
+Addressing this last issue was considered to be fairly minor compared to getting the distances in the first place. Also, since these stars still generally have good proper motion data, any application that uses only the proper motions for (relatively short term) space motion calculations isn't affected; only long-term 3D motion calculations are an issue. Resolving this may be a candidate for later versions of AT-HYG. 
 
 #### Possible additions in later releases
 
 Here are some items that are possible additions:
 
-1. Add BT (blue) magnitudes to Tycho's VT, giving us color index (on the BT and VT values) and also possibly an estimate of V magnitudes for Tycho stars, making magnitude values more consistent
+1. Address issue 3) above with an update similar to the one that added velocity information to SIMBAD-augmented Gliese stars. 
 2. Add spectral types directly from HD stars to ones that don't have them in HIP.
 3. (lower priority) Add conventional variable star letter IDs (R-Z, RR-QZ, V numbers, etc.) when known. Combined with the other two, this makes AT-HYG close to a drop-in replacement for HYG, with all the data for all the stars in HYG replicated in AT-HYG.
 

@@ -10,44 +10,37 @@ HIPPARCOS (and thus HYG) is getting a little dated, while Gaia (its ultimate rep
 
 I chose the Tycho-2 catalog for this purpose. The Tycho-2 catalog's size (~2.5M records) and coverage (essentially complete to V = 11, mostly complete to V = 11.5) makes it suitable for many current applications. It's large enough to be comprehensive for all but the deepest charts, but small enough to be manageable in fairly simple applications. 
 
-Tycho-2 (released in 2000) is only slightly younger than HIPPARCOS, so the idea was to combine it with the newer Gaia DR3 results (2020-2022) whenever feasible. This gives us high-quality distance information for over 2M stars instead of the lower-precision results from HIPPARCOS for 0.1M. Adding Gaia results to Tycho-2 gives an "Augmented" Tycho-2 dataset (AT), which is the basis for most stars in the new catalog.
+Tycho-2 (released in 2000) is only slightly younger than HIPPARCOS, so the idea was to combine it with the newer Gaia DR3 results (2020-2022) whenever feasible. This gives high-quality distance information for over 2M stars instead of the lower-precision results from HIPPARCOS for 0.1M. Adding Gaia results to Tycho-2 gives an "Augmented" Tycho-2 dataset (AT), which is the basis for most stars in the new catalog.
 
 By merging AT with HYG, the "classical" IDs and names for a large number of Tycho / Gaia stars are also available. The result is AT-HYG. 
 
 ### Download Format
 
-The full catalog, even when compressed, is too large for simple hosting in this repository. It is currently split into 2 components, which should be downloaded, uncompressed, and concatenated, e.g. (Linux command for version 2.0):
+The full catalog, even when compressed, is too large for simple hosting in this repository. It is currently split into 2 components, which should be downloaded, uncompressed, and concatenated, e.g. (Linux command for version 2.1):
 
-`cat athyg_v20-1.csv athyg_v20-2.csv > athyg_v20.csv`
+`cat athyg_v21-1.csv athyg_v21-2.csv > athyg_v21.csv`
 
 The full CSV can then be imported into the database tool of your choosing.
 
 ### Current Version: 
 
-The current version of AT-HYG is version v2.0 (v2/athyg_v20-*.csv.gz). 
+The current version of AT-HYG is version v2.1 (v2/athyg_v21-*.csv.gz). 
 
-#### Changes from version 1.x:
+#### Changes from version 2.0:
 
-Version 2.0 adds 3D velocity data to the data in version 1.1.
+##### Color index ("ci") field
 
-The new fields are:
+Version 2.1 adds a color index ("CI") field to the database. The color index comes either from Tycho-2 data ("mag_src" field = "T") or from HYG ("mag_src" field predominantly "HIP", a few "GJ" [Gliese] values). 
 
-* `rv`: The radial velocity in km/sec.
-* `rv_src`: The source for the radial velocity.
-* `pm_ra`, `pm_dec`: Proper motion in right ascension and declination respectively, in milliarcseconds per year. `pm_ra` has already been adjusted by cos(declination) to convert to true milliarcseconds.
-* `pm_src`: The source for the proper motion.
-* `vx`,`vy`,`vz`: The Cartesian coordinates for the velocity, in km/sec. The coordinate system is the same as for `x0`,`y0`,`z0`.
+The main difference between the Tycho-2 data and the other sources is Tycho-2 used slightly different magnitude measurements. HIPPARCOS and the older HYG sources used the common 20th-century "B" and "V" filter types for their measurements. Tycho-2 used "BT" and "VT", which are close to, but not exactly the same as, B and V respectively. The "ci" field for the "T" magnitue source is therefore BT-VT rather than B-V.
 
-The source field names are:
+For stars with either color index (B-V or BT-VT) close to 0, the differences are minimal, but for stars where VT is significantly smaller (i.e., brighter) than BT, the Tycho-2 BT-VT is noticeably larger than B-V. It is about 0.1 units higher for Sunlike (main sequence, spectral type G) stars and 0.25-0.3 for main-sequence M stars. 
 
-* `G_R2`: Gaia data release 2
-* `G_R3`: Gaia data release 3
-* `T`: Tycho-2
-* `HIP`: HIPPARCOS
-* `HYG`: Source catalogs for HYG values. For proper motions this is normally HIP, but for radial velocities, it can be Yale BSC, Gliese, or the Wilson Evans Batten (Henry Draper cross-reference) catalog of radial velocities. These were not historically differentiated during the HYG build, but in general the newer W.E.B. catalog data was preferred.
-* `GJ`: Gliese (Gliese-Jahreiss)
+##### Additional data from SIMBAD lookups
 
-##### Details on velocity calculations
+In previous versions of AT-HYG, a subset of HYG stars with Gliese IDs were run through data lookups in SIMBAD to get additional HYG-Tycho 2 cross-references and also improved parallax values from Gaia-DR2 or -DR3. This process was expanded to include proper motions and radial velocities in AT-HYG v2.1, adding a number of velocities that were missing or lower-quality in AT-HYG v2.0.
+
+#### Details on velocity calculations
 
 The vast majority of proper motion data came from Gaia DR3, with HIP and Tycho-2 providing a few values, especially for stars too bright to have been measured by Gaia. A small number of HYG stars only in the Gliese catalog kept their proper motion values from that catalog.
 
@@ -57,13 +50,12 @@ A large majority of radial velocities came from Gaia DR3, but about 20% of Tycho
 
 When the radial velocity was missing or equal to zero, the Cartesian velocities were still calculated, but assuming no radial component. This makes those particular values accurate only for short time frames.
 
-##### Comparison to HYG
+#### Comparison to HYG
 
 The HYG catalog lists proper motions and radial velocities in the same units as AT-HYG (milliarcsec/year and km/sec respectively), but has the Cartesian velocities vx, vy, and vz in parsecs per year. AT-HYG uses kilometers per second, in part to reduce the space needed for figures in CSV format (the figures in pc/year have 5 or 6 leading zeroes) and in part to make direct comparisons to the radial velocity simple. The conversion factor for converting km/sec to pc/year is 1 km/sec = 1.02269 E-6 pc/year.
 
 Apart from the difference in units for vx, vy, and vz, and a few slightly different field names, AT-HYG 2.0 is almost a drop-in replacement for HYG 3.x for many applications -- in particular, for any application that needs only the stars' catalog IDs, historical IDs (like Henry Draper or traditional names), magnitudes, positions, and velocities. The fields missing from AT-HYG that are present in HYG are:
 
-* B-V color index
 * Spectral type
 * Variable star IDs and approximate magnitude ranges
 * Explicit identification of components in multiple stars (in terms of a "base ID" representing the primary and a component ID)

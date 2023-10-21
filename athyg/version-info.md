@@ -47,6 +47,31 @@ The fields for Version 1 are present unchanged, but with the following new field
 
 ### Version-Specific Changes
 
+#### Changes from v1.1 to v2.0
+
+Version 2.0 adds 3D velocity data to the data in version 1.1.
+
+The new fields are:
+
+* `rv`: The radial velocity in km/sec.
+* `rv_src`: The source for the radial velocity.
+* `pm_ra`, `pm_dec`: Proper motion in right ascension and declination respectively, in milliarcseconds per year. `pm_ra` has already been adjusted by cos(declination) to convert to true milliarcseconds.
+* `pm_src`: The source for the proper motion.
+* `vx`,`vy`,`vz`: The Cartesian coordinates for the velocity, in km/sec. The coordinate system is the same as for `x0`,`y0`,`z0`.
+
+The source field ("*_src")values are:
+
+* `G_R2`: Gaia data release 2
+* `G_R3`: Gaia data release 3
+* `T`: Tycho-2
+* `HIP`: HIPPARCOS
+* `HYG`: Source catalogs for HYG values. For proper motions this is normally HIP, but for radial velocities, it can be Yale BSC, Gliese, or the Wilson Evans Batten (Henry Draper cross-reference) catalog of radial velocities. These were not historically differentiated during the HYG build, but in general the newer W.E.B. catalog data was preferred.
+* `GJ`: Gliese (Gliese-Jahreiss)
+* `OTHER`: Source is one of a miscellany. There are only two cases of this in recent AT-HYG versions:
+    * the Sun's "_src" fields all have a value of "OTHER"
+    * radial velocities sourced from SIMBAD for certain Gliese stars.
+* `NONE`: No valid data for this field exists in any source.
+
 #### Changes from v1.0 to v1.1
 
 No new stars were added, but two significant changes to data were made:
