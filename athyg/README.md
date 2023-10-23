@@ -40,6 +40,15 @@ For stars with either color index (B-V or BT-VT) close to 0, the differences are
 
 In previous versions of AT-HYG, a subset of HYG stars with Gliese IDs were run through data lookups in SIMBAD to get additional HYG-Tycho 2 cross-references and also improved parallax values from Gaia-DR2 or -DR3. This process was expanded to include proper motions and radial velocities in AT-HYG v2.1, adding a number of velocities that were missing or lower-quality in AT-HYG v2.0.
 
+
+##### An (as in, one) incorrect radial velocity from SIMBAD
+
+The star GJ 2077, in the initial release of v2.1, had an incorrect radial velocity as a result of a SIMBAD lookup returning a strange value. 
+
+GJ 2077 has an RV of -140.0 km/s in the Gliese catalog, but SIMBAD returned a value of z = 2.188 (~0.8 c!) because of what seems to be a case of mistaken identity: a relatively recent publication (https://www.aanda.org/articles/aa/pdf/2010/10/aa14188-10.pdf) created a catalog of QSOs and classified it as a quasar with that redshift, instead of a white dwarf star. Shortly after originally releasing v2.1, I found the discrepancy and recalculated GJ 2077's Cartesian velocities with the older Gliese RV of -140.0 km/s and reuploaded. This did not seem to merit a distinct version of the catalog, so I left it as v2.1.
+
+I spot-checked a few other large RVs and did not see anything else remotely as discrepant, so this version should be stable until the next significant change to types of data included in the catalog.
+
 #### Details on velocity calculations
 
 The vast majority of proper motion data came from Gaia DR3, with HIP and Tycho-2 providing a few values, especially for stars too bright to have been measured by Gaia. A small number of HYG stars only in the Gliese catalog kept their proper motion values from that catalog.
